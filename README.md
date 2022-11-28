@@ -2,4 +2,4 @@
 NLP task of quantifying the intimacy-score of texts in a multi-lingual setup
 
 pre-requisites:
-pip3 install googletrans
+pip install googletrans==4.0.0rc1
