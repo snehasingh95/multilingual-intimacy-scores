@@ -54,13 +54,23 @@ python3 train_intimacy_model.py --mode=train --model_name=xlm-roberta-base --pre
 #python3 train_intimacy_model.py --mode=internal-test --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs/$TEST_ID/ --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --lang=French --test_saving_path=outputs/$TEST_ID/internal_test_fr.txt  > outputs/$TEST_ID/internal_test_fr_console.txt
 #cat outputs/$TEST_ID/internal_test_fr_console.txt
 
+#internal testing - chinese
+#python3 train_intimacy_model.py --mode=internal-test --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs/$TEST_ID/ --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --lang=Chinese --test_saving_path=outputs/$TEST_ID/internal_test_ch.txt  > outputs/$TEST_ID/internal_test_ch_console.txt
+#cat outputs/$TEST_ID/internal_test_ch_console.txt
+
 #internal testing - spanish
 #python3 train_intimacy_model.py --mode=internal-test --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs/$TEST_ID/ --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --lang=Spanish --test_saving_path=outputs/$TEST_ID/internal_test_sp.txt  > outputs/$TEST_ID/internal_test_sp_console.txt
 #cat outputs/$TEST_ID/internal_test_sp_console.txt
 
-#internal testing - chinese
-#python3 train_intimacy_model.py --mode=internal-test --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs/$TEST_ID/ --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --lang=Chinese --test_saving_path=outputs/$TEST_ID/internal_test_ch.txt  > outputs/$TEST_ID/internal_test_ch_console.txt
-#cat outputs/$TEST_ID/internal_test_ch_console.txt
+#internal testing - portugese
+#python3 train_intimacy_model.py --mode=internal-test --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs/$TEST_ID/ --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --lang=Portuguese --test_saving_path=outputs/$TEST_ID/internal_test_pt.txt  > outputs/$TEST_ID/internal_test_pt_console.txt
+#cat outputs/$TEST_ID/internal_test_pt_console.txt
+
+#internal testing - italian
+#python3 train_intimacy_model.py --mode=internal-test --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs/$TEST_ID/ --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --lang=Italian --test_saving_path=outputs/$TEST_ID/internal_test_it.txt  > outputs/$TEST_ID/internal_test_it_console.txt
+#cat outputs/$TEST_ID/internal_test_it_console.txt
+
+
 
 ######################################################################################################################################################
 
