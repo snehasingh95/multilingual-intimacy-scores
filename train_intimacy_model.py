@@ -218,7 +218,7 @@ def arguments():
     parser.add_argument('--model_name')
     parser.add_argument('--pre_trained_model_name_or_path')
     parser.add_argument('--base_dir', default='data/multi_language_data/')
-    parser.add_argument('--file_name', default='train_normalised.csv')
+    parser.add_argument('--file_name', default='train_normalized.csv')
     parser.add_argument('--sheet', default='train')
     parser.add_argument('--feature_cols', default='text')
     parser.add_argument('--target_col', default='normalized label')
@@ -235,6 +235,7 @@ if __name__=='__main__':
     
     def load_data(base_dir, file_name):
         print('loading:', (base_dir, file_name))
+        #assert(base_dir=='data/multi_language_data/' and file_name=='train_normalized.csv')
         return load_dataset(base_dir, data_files=file_name)
 
 
