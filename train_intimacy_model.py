@@ -222,7 +222,7 @@ def arguments():
     parser.add_argument('--sheet', default='train')
     parser.add_argument('--feature_cols', default='text')
     parser.add_argument('--target_col', default='normalized label')
-    parser.add_argument('--lang', default='English')
+    parser.add_argument('--lang', default='None')
     parser.add_argument('--model_saving_path', default='outputs')
     parser.add_argument('--test_saving_path', default=None)
 
@@ -394,7 +394,7 @@ if __name__=='__main__':
         test_text, test_labels = get_data(raw_data, args.feature_cols, args.target_col, lang=args.lang)
         
         print('test:')
-        test_result, test_score = get_test_result(model, test_text, test_labels, config, tokenizer,save_path=None, ext_test = False)
+        test_result, test_score = get_test_result(model, test_text, test_labels, config, tokenizer,save_path=args.test_saving_path, ext_test = False)
         
     elif args.mode == 'inference':
         raw_data = load_data(args.base_dir, args.file_name)[args.sheet]

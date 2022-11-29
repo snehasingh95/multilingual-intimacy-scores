@@ -22,7 +22,7 @@ class Config(object):
 			self.max_epochs = 3
 			self.lr = 0.00001
 			self.batch_size = 64
-			self.cuda = False
+			self.cuda = True
 			self.max_len = 50
 			self.n_folds = 10
 		else:

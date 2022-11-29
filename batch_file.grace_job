@@ -1,0 +1,75 @@
+#!/bin/bash
+
+##NECESSARY JOB SPECIFICATIONS
+#SBATCH --job-name=intimacy-scores     #Set the job name to "JobExample2"
+#SBATCH --time=12:00:00               #Set the wall clock limit to 6hr
+#SBATCH --ntasks=1                 #Request 1 node
+#SBATCH --mem=50G
+#SBATCH --gres=gpu:1 #accessing gpu
+#SBATCH --partition=gpu
+#SBATCH --output=outputs/$TEST_ID/intimacy-scores.%j
+
+##OPTIONAL JOB SPECIFICATIONS
+##SBATCH --account=          #Set billing account to 123456, this account number you can find in https://hprc.tamu.edu/ams/
+##SBATCH --mail-type=           #Send email on all job events
+##SBATCH --mail-user=snehasingh95@tamu.edu    #Send all emails to email_address 
+
+module load iccifort/2020.1.217
+module load impi/2019.7.217
+module load ASE/3.20.1-Python-3.8.2
+cd /scratch/user/sunayna/   #xxxx is your account name
+source intimacy-scores/bin/activate   #active the venv you created in step 1
+
+# pip3 install numpy torch==1.7.1+cu110 torchvision==0.8.2+cu110 torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+# pip3 install scipy tqdm transformers sentencepiece datasets
+
+
+cd nlp/project/
+TEST_ID='test1'
+
+echo "$TEST_ID: xlm-roberta-base (lang=English)"
+mkdir outputs/$TEST_ID
+
+######################################################################################################################################################
+
+#training
+python3 train_intimacy_model.py --mode=train --model_name=xlm-roberta-base --pre_trained_model_name_or_path=xlm-roberta-base --base_dir=data/multi_language_data/ --file_name=train_normalized.csv  --model_saving_path=outputs/$TEST_ID/ --lang=English > outputs/$TEST_ID/train_en_console.txt
+#cat outputs/$TEST_ID/train_en_console.txt
+
+#training on French after English (European Language)
+#python3 train_intimacy_model.py --mode=train --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs/$TEST_ID/ --base_dir=data/multi_language_data/ --file_name=train_normalized.csv  --model_saving_path=outputs/$TEST_ID/ --lang=French > outputs/$TEST_ID/train_fr_console.txt
+#cat outputs/$TEST_ID/train_fr_console.txt
+
+#training on Chinese after English (Asian Language)
+#python3 train_intimacy_model.py --mode=train --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs/$TEST_ID/ --base_dir=data/multi_language_data/ --file_name=train_normalized.csv  --model_saving_path=outputs/$TEST_ID/ --lang=Chinese > outputs/$TEST_ID/train_ch_console.txt
+#cat outputs/$TEST_ID/train_ch_console.txt
+
+######################################################################################################################################################
+
+#internal testing - english
+#python3 train_intimacy_model.py --mode=internal-test --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs/$TEST_ID/ --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --lang=English --test_saving_path=outputs/$TEST_ID/internal_test_en.txt  > outputs/$TEST_ID/internal_test_en_console.txt
+#cat outputs/$TEST_ID/internal_test_en_console.txt
+
+#internal testing - french
+#python3 train_intimacy_model.py --mode=internal-test --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs/$TEST_ID/ --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --lang=French --test_saving_path=outputs/$TEST_ID/internal_test_fr.txt  > outputs/$TEST_ID/internal_test_fr_console.txt
+#cat outputs/$TEST_ID/internal_test_fr_console.txt
+
+#internal testing - spanish
+#python3 train_intimacy_model.py --mode=internal-test --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs/$TEST_ID/ --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --lang=Spanish --test_saving_path=outputs/$TEST_ID/internal_test_sp.txt  > outputs/$TEST_ID/internal_test_sp_console.txt
+#cat outputs/$TEST_ID/internal_test_sp_console.txt
+
+#internal testing - chinese
+#python3 train_intimacy_model.py --mode=internal-test --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs/$TEST_ID/ --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --lang=Chinese --test_saving_path=outputs/$TEST_ID/internal_test_ch.txt  > outputs/$TEST_ID/internal_test_ch_console.txt
+#cat outputs/$TEST_ID/internal_test_ch_console.txt
+
+######################################################################################################################################################
+
+#internal testing - all languages
+#python3 train_intimacy_model.py --mode=internal-test --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs/$TEST_ID/ --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --test_saving_path=outputs/$TEST_ID/internal_test.txt  > outputs/$TEST_ID/internal_test_console.txt
+#cat outputs/$TEST_ID/internal_test_console.txt
+
+######################################################################################################################################################
+
+#inference
+#python3 train_intimacy_model.py --mode=inference --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs/$TEST_ID/ --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --test_saving_path=inference.txt > outputs/$TEST_ID/inference_console.txt 
+#cat outputs/$TEST_ID/inference_console.txt
