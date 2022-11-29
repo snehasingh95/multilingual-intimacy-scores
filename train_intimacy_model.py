@@ -73,7 +73,6 @@ def get_metrics(model, test_x, test_y, config, tokenizer, test = False, save_pat
                     print(all_x[i], all_res[i], test_y[i])
                 w.writelines(all_x[i] + '\t' + str(all_y[i]) + '\t' + str(all_res[i]) + '\n')
 
-    #print('pearson r:', stats.pearsonr(all_res, all_y)[0])
     score = 0
     return loss,stats.pearsonr(all_res, all_y)[0]
 
@@ -222,7 +221,7 @@ def arguments():
     parser.add_argument('--sheet', default='train')
     parser.add_argument('--feature_cols', default='text')
     parser.add_argument('--target_col', default='normalized label')
-    parser.add_argument('--lang', default=None)
+    parser.add_argument('--lang', nargs="*", type=str, default=None)
     parser.add_argument('--model_saving_path', default='outputs')
     parser.add_argument('--test_saving_path', default=None)
 
@@ -238,6 +237,12 @@ if __name__=='__main__':
         #assert(base_dir=='data/multi_language_data/' and file_name=='train_normalized.csv')
         return load_dataset(base_dir, data_files=file_name)
 
+    def shuffle_data(text,label):
+        idx_list = np.arange(len(text))
+        shuffle(idx_list)
+        text = [text[idx] for idx in idx_list]
+        label = [label[idx] for idx in idx_list]
+        return text, label
 
     def get_data(raw_data, feature_cols, target_col, lang_col='language', lang=None):
         if lang:
@@ -245,19 +250,12 @@ if __name__=='__main__':
         else:
             idx_list = [idx for idx, val in enumerate(raw_data)]
 
-        #shuffle the data
-        shuffle(idx_list)
-        
-        # data = [{
-        #     'text': raw_data[idx]['text'],
-        #     'label': raw_data[idx]['normalized label'] 
-        #     }
-        #     for idx in idx_list]
-
         input_text = [raw_data[idx][feature_cols] for idx in idx_list]
         label = [raw_data[idx][target_col] for idx in idx_list]
-        
+
         assert len(input_text) == len(label)
+        
+        input_text, label = shuffle_data(input_text, label)
 
         return input_text, label
         
@@ -283,7 +281,8 @@ if __name__=='__main__':
                 text_folds[i].extend(lang_text[split[i]:split[i+1]])
                 label_folds[i].extend(lang_label[split[i]:split[i+1]])
                 
-        #for i in range(k):
+        for i in range(k):
+            shuffle_data(text_folds[i], label_folds[i])
         #    print('Fold',i+1,':',len(text_folds[i]),'data')
                 
         return text_folds,label_folds
@@ -323,11 +322,20 @@ if __name__=='__main__':
         model.cuda()
 
     if args.mode == 'train':
+        # print('Training Languages:', args.lang)
         raw_data = load_data(args.base_dir, args.file_name)[args.sheet]
-        train_text,train_label = get_data(raw_data, args.feature_cols, args.target_col, lang=args.lang)
+
+        train_text = []
+        train_label = []
+        for lang in args.lang:
+            text,label = get_data(raw_data, args.feature_cols, args.target_col, lang=lang)
+            train_text.append(text)
+            train_label.append(label)
+        # train_text,train_label = get_data(raw_data, args.feature_cols, args.target_col, lang=args.lang)
+
         print('Training data loaded')
         
-        text_folds,label_folds = k_folds(config.n_folds, [train_text], [train_label])
+        text_folds,label_folds = k_folds(config.n_folds, train_text, train_label)
         print('Training Folds created')
         
         #last fold is the test set (10%)
@@ -339,6 +347,8 @@ if __name__=='__main__':
         
         #k_fold_cross_validation (train = 90%, val = 10%)
         train_text_folds,train_label_folds,val_text_folds,val_label_folds = k_fold_split(config.n_folds-1, text_folds,label_folds)
+
+        exit()
         
         model.train()
         optimizer = optim.Adam(model.parameters(), lr=config.lr, weight_decay=1e-6)
@@ -391,7 +401,7 @@ if __name__=='__main__':
         
     elif args.mode == 'internal-test':
         raw_data = load_data(args.base_dir, args.file_name)[args.sheet]
-        test_text, test_labels = get_data(raw_data, args.feature_cols, args.target_col, lang=args.lang)
+        test_text, test_labels = get_data(raw_data, args.feature_cols, args.target_col, lang=args.lang[0])
         
         print('test:')
         test_result, test_score = get_test_result(model, test_text, test_labels, config, tokenizer,save_path=args.test_saving_path, ext_test = False)
