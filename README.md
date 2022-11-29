@@ -11,7 +11,7 @@ source intimacy-scores/bin/activate
 #installations
 #pip3 unintall torch torchvision
 pip3 install torch torchvision -f https://download.pytorch.org/whl/torch_stable.html
-pip3 install scipy tqdm transformers sentencepiece
+pip3 install scipy tqdm transformers sentencepiece datasets
 
 #shut-down
 deactivate
@@ -24,7 +24,7 @@ python -m venv intimacy-scores
 #installations
 #pip3 unintall torch torchvision
 python -m pip install torch torchvision -f https://download.pytorch.org/whl/torch_stable.html
-python -m pip install scipy tqdm transformers sentencepiece
+python -m pip install scipy tqdm transformers sentencepiece datasets
 
 #shut-down
 deactivate
@@ -34,11 +34,23 @@ deactivate
 Training:
 
 #roberta-base
-python train_intimacy_model.py --mode=train --model_name=roberta-base --pre_trained_model_name_or_path=roberta-base  --train_path=data/annotated_question_intimacy_data/final_train.txt --val_path=data/annotated_question_intimacy_data/final_val.txt --test_path=data/annotated_question_intimacy_data/final_test.txt --model_saving_path=outputs
+python train_intimacy_model.py --mode=train --model_name=roberta-base --pre_trained_model_name_or_path=roberta-base --base_dir=data/multi_language_data/ --file_name=train_normalised.csv  --model_saving_path=outputs --lang=Englishh
 
 #xlm-roberta-base
-python train_intimacy_model.py --mode=train --model_name=xlm-roberta-base --pre_trained_model_name_or_path=xlm-roberta-base  --train_path=data/annotated_question_intimacy_data/final_train.txt --val_path=data/annotated_question_intimacy_data/final_val.txt --test_path=data/annotated_question_intimacy_data/final_test.txt --model_saving_path=outputs
+python train_intimacy_model.py --mode=train --model_name=xlm-roberta-base --pre_trained_model_name_or_path=xlm-roberta-base --base_dir=data/multi_language_data/ --file_name=train_normalised.csv  --model_saving_path=outputs --lang=English
 
+Intimacy Score Evaluation (Internal Test Evaluation):
 
+#roberta-base
+python train_intimacy_model.py --mode=internal-test --model_name=roberta-base --pre_trained_model_name_or_path=roberta-base --base_dir=data/multi_language_data/ --file_name=train_normalised.csv --lang=English --test_saving_path=ooo.txt 
 
-Evaluation:
+#xlm-roberta-base
+python train_intimacy_model.py --mode=internal-test --model_name=xlm-roberta-base --pre_trained_model_name_or_path=xlm-roberta-base --base_dir=data/multi_language_data/ --file_name=train_normalised.csv --lang=English --test_saving_path=ooo.txt 
+
+Testing/Inference:
+
+#roberta-base
+python train_intimacy_model.py --mode=inference --model_name=roberta-base --pre_trained_model_name_or_path=roberta-base --base_dir=data/multi_language_data/ --file_name=train_normalised.csv --test_saving_path=ooo.txt 
+
+#xlm-roberta-base
+python train_intimacy_model.py --mode=inference --model_name=xlm-roberta-base --pre_trained_model_name_or_path=xlm-roberta-base --base_dir=data/multi_language_data/ --file_name=train_normalised.csv --test_saving_path=ooo.txt 

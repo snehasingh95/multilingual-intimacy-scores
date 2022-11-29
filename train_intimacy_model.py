@@ -1,5 +1,6 @@
 # train.py
 
+import os
 from config import Config
 import math
 from scipy import stats
@@ -11,6 +12,8 @@ from torch.autograd import Variable
 import torch
 from transformers import BertTokenizer, BertModel, RobertaTokenizer, RobertaModel,  RobertaForSequenceClassification, XLMRobertaTokenizer, XLMRobertaForSequenceClassification
 from argparse import ArgumentParser
+from datasets import load_dataset
+from random import shuffle
 
 
 torch.manual_seed(0)
@@ -214,11 +217,13 @@ def arguments():
     parser.add_argument('--mode')
     parser.add_argument('--model_name')
     parser.add_argument('--pre_trained_model_name_or_path')
-    parser.add_argument('--train_path', default='train.txt')
-    parser.add_argument('--val_path', default='val.txt')
-    parser.add_argument('--test_path', default='test.txt')
-    parser.add_argument('--predict_data_path')
-    parser.add_argument('--model_saving_path', default=None)
+    parser.add_argument('--base_dir', default='data/multi_language_data/')
+    parser.add_argument('--file_name', default='train_normalised.csv')
+    parser.add_argument('--sheet', default='train')
+    parser.add_argument('--feature_cols', default='text')
+    parser.add_argument('--target_col', default='normalized label')
+    parser.add_argument('--lang', default='English')
+    parser.add_argument('--model_saving_path', default='outputs')
     parser.add_argument('--test_saving_path', default=None)
 
     return parser.parse_args()
@@ -227,25 +232,84 @@ def arguments():
 if __name__=='__main__':
 
     args = arguments()
-    def get_data(path):
-        print('open:',path)
-        text = []
-        y = []
-        size=64
-        with open(path, 'r') as r:
-            lines = r.readlines()
-            for line in lines:
-                line = line.strip('\n').split('\t')
-                text.append(line[0])
-                if len(line) == 2:
-                    y.append(float(line[1]))
-                elif len(line) == 1:
-                    y.append(0.0)
-                else:
-                    print('error in loading:',path)
-                if(len(y)>=size):
-                    break;
-        return text,y
+    
+    def load_data(base_dir, file_name):
+        print('loading:', (base_dir, file_name))
+        return load_dataset(base_dir, data_files=file_name)
+
+
+    def get_data(raw_data, feature_cols, target_col, lang_col='language', lang=None):
+        if lang:
+            idx_list = [idx for idx, val in enumerate(raw_data) if val[lang_col] == lang]
+        else:
+            idx_list = [idx for idx, val in enumerate(raw_data)]
+
+        #shuffle the data
+        shuffle(idx_list)
+        
+        # data = [{
+        #     'text': raw_data[idx]['text'],
+        #     'label': raw_data[idx]['normalized label'] 
+        #     }
+        #     for idx in idx_list]
+
+        input_text = [raw_data[idx][feature_cols] for idx in idx_list]
+        label = [raw_data[idx][target_col] for idx in idx_list]
+        
+        assert len(input_text) == len(label)
+
+        return input_text, label
+        
+    def k_folds(k, text, label):
+        text_folds = [[] for i in range(k)]
+        label_folds = [[] for i in range(k)]
+        n_language = len(text)
+        
+        print('Folding...')
+        for lang_indx in range(n_language):
+            lang_text = text[lang_indx]
+            lang_label = label[lang_indx]
+            
+            size = len(lang_text)//k
+            split=[]
+            for i in range(k):
+                split.append(i*size)
+            if split[-1]!=len(lang_text):
+                split.append(len(lang_text))
+    #         print(split)
+                
+            for i in range(k):
+                text_folds[i].extend(lang_text[split[i]:split[i+1]])
+                label_folds[i].extend(lang_label[split[i]:split[i+1]])
+                
+        #for i in range(k):
+        #    print('Fold',i+1,':',len(text_folds[i]),'data')
+                
+        return text_folds,label_folds
+        
+    def k_fold_split(k, text_folds,label_folds):
+        train_text = []
+        train_label = []
+        validate_text = []
+        validate_label = []
+        
+        for i in range(k):
+            validate_text.append(text_folds[i])
+            validate_label.append(label_folds[i])
+            
+            text =[]
+            label=[]
+            for j in range(k):
+                if(i!=j):
+                    text.extend(text_folds[i])
+                    label.extend(label_folds[i])
+                    
+            train_text.append(text)
+            train_label.append(label)
+            
+            #print("Split",i+1,"- Training Data:",len(train_text[i]),"- Validation Data:",len(validate_text[i]))
+            
+        return train_text,train_label,validate_text,validate_label
 
     
     config = Config(args.model_name)
@@ -256,49 +320,62 @@ if __name__=='__main__':
     model = XLMRobertaForSequenceClassification.from_pretrained(args.pre_trained_model_name_or_path,num_labels=1,output_attentions = False,output_hidden_states = False)
     if config.cuda:
         model.cuda()
-        
-       
 
     if args.mode == 'train':
+        raw_data = load_data(args.base_dir, args.file_name)[args.sheet]
+        train_text,train_label = get_data(raw_data, args.feature_cols, args.target_col, lang=args.lang)
+        print('Training data loaded')
         
-        train_text,  train_labels = get_data(args.train_path)
-        val_text,  val_labels = get_data(args.val_path)
-        test_text,  test_labels = get_data(args.test_path)
+        text_folds,label_folds = k_folds(config.n_folds, [train_text], [train_label])
+        print('Trainging Folds created')
         
-        train_x = train_text
-        train_y = np.array(train_labels)
-        val_x = val_text
-        val_y = np.array(val_labels)
+        #last fold is the test set (10%)
+        test_x = text_folds[-1]
+        test_y  = np.array(label_folds[-1])
+        text_folds = text_folds[:-1]
+        label_folds = label_folds[:-1]
+        print('Test data seperated with',len(test_x),'data')
+        
+        #k_fold_cross_validation (train = 90%, val = 10%)
+        train_text_folds,train_label_folds,val_text_folds,val_label_folds = k_fold_split(config.n_folds-1, text_folds,label_folds)
+        
         model.train()
         optimizer = optim.Adam(model.parameters(), lr=config.lr, weight_decay=1e-6)
-        ##############################################################
-
-        train_data = [train_x, train_y]
-        val_data = [val_x, val_y]
-
+            
         # Get Accuracy of final model
-        test_x = test_text
-        test_y = np.array(test_labels)
         best_val = 100.0
         best_test = 100.0
         best_r = 100
+        
+        print('Starting training...')
+        for k in range(config.n_folds-1):
+            train_x = train_text_folds[k]
+            train_y = np.array(train_label_folds[k])
+            val_x = val_text_folds[k]
+            val_y = np.array(val_label_folds[k])
+            print("Split",k+1,"- Training Data:",len(train_x),"- Validation Data:",len(val_x))
+            
+            ##############################################################
 
-        for i in range(config.max_epochs):
-            print ("Epoch: {}".format(i))
+            train_data = [train_x, train_y]
+            val_data = [val_x, val_y]
 
-            train_losses,val_accuracies = run_epoch(model, train_data, val_data, tokenizer,config, optimizer)
-            test_acc,test_r = get_metrics(model, test_x, test_y, config, tokenizer, test = True, save_path=args.test_saving_path)
-            #print('Final Test Accuracy: {:.4f}'.format(test_acc))
+            for i in range(config.max_epochs):
+                print ("Epoch: {}".format(i))
 
-            print("\tAverage training loss: {:.5f}".format(np.mean(train_losses)))
-            print("\tAverage Val MSE: {:.4f}".format(np.mean(val_accuracies)))
-            if np.mean(val_accuracies) < best_val:
-                best_val = np.mean(val_accuracies)
-                best_test = test_acc
-                best_r = test_r
-                if i >= 1 and args.model_saving_path:
-                    model.save_pretrained(args.model_saving_path)
-                    tokenizer.save_pretrained(args.model_saving_path)
+                train_losses,val_accuracies = run_epoch(model, train_data, val_data, tokenizer,config, optimizer)
+                test_acc,test_r = get_metrics(model, test_x, test_y, config, tokenizer, test = True, save_path=args.test_saving_path)
+                #print('Final Test Accuracy: {:.4f}'.format(test_acc))
+
+                print("\tAverage training loss: {:.5f}".format(np.mean(train_losses)))
+                print("\tAverage Val MSE: {:.4f}".format(np.mean(val_accuracies)))
+                if np.mean(val_accuracies) < best_val:
+                    best_val = np.mean(val_accuracies)
+                    best_test = test_acc
+                    best_r = test_r
+                    if i >= 1 and args.model_saving_path:
+                        model.save_pretrained(args.model_saving_path)
+                        tokenizer.save_pretrained(args.model_saving_path)
 
 
         print('model saved at', args.model_saving_path)
@@ -310,24 +387,18 @@ if __name__=='__main__':
         #if args.model_saving_path:
         #    model.save_pretrained(args.model_saving_path)
         #    tokenizer.save_pretrained(args.model_saving_path)
-
-
-    elif args.mode == 'internal-test':
-        val_text,  val_labels = get_data(args.val_path)
-        test_text,  test_labels = get_data(args.test_path)
-        final_test_text,final_test_y = get_data(args.predict_data_path)
         
-        print('external_test:')
-        test_result, test_score = get_test_result(model, final_test_text, final_test_y, config, tokenizer,save_path=args.test_saving_path, ext_test = True)
-
-        print('val:')
-        test_result, test_score = get_test_result(model, val_text, val_labels, config, tokenizer,save_path=None, ext_test = False)
-
+    elif args.mode == 'internal-test':
+        raw_data = load_data(args.base_dir, args.file_name)[args.sheet]
+        test_text, test_labels = get_data(raw_data, args.feature_cols, args.target_col, lang=args.lang)
+        
         print('test:')
         test_result, test_score = get_test_result(model, test_text, test_labels, config, tokenizer,save_path=None, ext_test = False)
         
     elif args.mode == 'inference':
-        final_test_text,final_test_y = get_data(args.predict_data_path)
+        raw_data = load_data(args.base_dir, args.file_name)[args.sheet]
+        final_test_text,final_test_y = get_data(raw_data, args.feature_cols, args.target_col)
+        
         test_result, test_score = get_test_result(model, final_test_text, final_test_y, config, tokenizer,save_path=args.test_saving_path, ext_test = False, pure_inference=True)
 
 

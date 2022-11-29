@@ -129,3 +129,5 @@ dmypy.json
 .pyre/
 Quantifying-Intimacy-in-Language-main/.
 Quantifying-Intimacy-in-Language-main/
+Experimental.ipynb
+intimacy-scores/
