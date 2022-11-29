@@ -24,7 +24,7 @@ source intimacy-scores/bin/activate   #active the venv you created in step 1
 # pip3 install scipy tqdm transformers sentencepiece datasets
 
 
-cd nlp/project/
+cd nlp/project/xlm_r
 TEST_ID='test1'
 
 echo "$TEST_ID: xlm-roberta-base (lang=English)"
