@@ -65,7 +65,7 @@ python3 train_intimacy_model.py --mode=train --model_name=xlm-roberta-base --pre
 ######################################################################################################################################################
 
 #internal testing - all languages
-#python3 train_intimacy_model.py --mode=internal-test --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs/$TEST_ID/ --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --test_saving_path=outputs/$TEST_ID/internal_test.txt  > outputs/$TEST_ID/internal_test_console.txt
+python3 train_intimacy_model.py --mode=internal-test --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs/$TEST_ID/ --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --test_saving_path=outputs/$TEST_ID/internal_test.txt  > outputs/$TEST_ID/internal_test_console.txt
 #cat outputs/$TEST_ID/internal_test_console.txt
 
 ######################################################################################################################################################
