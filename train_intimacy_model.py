@@ -222,7 +222,7 @@ def arguments():
     parser.add_argument('--sheet', default='train')
     parser.add_argument('--feature_cols', default='text')
     parser.add_argument('--target_col', default='normalized label')
-    parser.add_argument('--lang', default='None')
+    parser.add_argument('--lang', default=None)
     parser.add_argument('--model_saving_path', default='outputs')
     parser.add_argument('--test_saving_path', default=None)
 
@@ -328,7 +328,7 @@ if __name__=='__main__':
         print('Training data loaded')
         
         text_folds,label_folds = k_folds(config.n_folds, [train_text], [train_label])
-        print('Trainging Folds created')
+        print('Training Folds created')
         
         #last fold is the test set (10%)
         test_x = text_folds[-1]
