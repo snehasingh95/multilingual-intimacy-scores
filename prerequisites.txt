@@ -1,9 +1,0 @@
-#creating the environment
-python3 -m venv intimacy-scores
-
-#active the venv you created
-source intimacy-scores/bin/activate   
-
-python3 -m pip install --upgrade pip
-python3 -m pip install numpy torch==1.7.1+cu110 torchvision==0.8.2+cu110 torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
-python3 -m pip install scipy tqdm transformers
