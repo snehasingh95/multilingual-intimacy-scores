@@ -5,4 +5,5 @@ The pre-requisites are mentioned in prerequisites.txt.
 The arguments to train and test our model are specified in train_test_args.txt.
 
 We have created three models, one for each language english, french and chinese. 
-The trained models are on the github link provided in the monolingual_models branch.
+The trained models are on the drive link provided below:
+https://drive.google.com/drive/folders/1q7UOqh8B1flNLblQWfuUXGDWfYqgAu7W?usp=sharing
