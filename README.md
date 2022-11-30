@@ -55,3 +55,7 @@ Testing/Inference:
 
 #xlm-roberta-base
 python train_intimacy_model.py --mode=inference --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --test_saving_path=inference.txt
+
+
+For results/models check:
+https://drive.google.com/drive/folders/12W2CSXJks7QWrV4ju2x0-el-VkS7B9P0?usp=share_link
