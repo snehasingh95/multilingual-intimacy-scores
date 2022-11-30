@@ -1,0 +1,55 @@
+To train and test the model run the following commands:
+---------------------------------------------------------------------------
+English:
+
+python3 train_intimacy_model.py --mode=train \
+--model_name=bert-base-english \
+--pre_trained_model_name_or_path=bert-base-uncased \
+--train_path=data/monolingual/english_data/final_train.txt \
+--val_path=data/monolingual/english_data/final_val.txt \
+--test_path=data/monolingual/english_data/final_test.txt \
+--model_saving_path=outputs_english 
+
+python3 train_intimacy_model.py --mode=internal-test \
+--model_name=bert-base-english \
+--pre_trained_model_name_or_path=outputs_english \
+--train_path=data/monolingual/english_data/final_train.txt \
+--val_path=data/monolingual/english_data/final_val.txt \
+--test_path=data/monolingual/english_data/final_test.txt \
+--predict_data_path=data/monolingual/english_data/final_test.txt
+---------------------------------------------------------------------------
+French:
+
+python3 train_intimacy_model.py --mode=train \
+--model_name=bert-base-french \
+--pre_trained_model_name_or_path=dbmdz/bert-base-french-europeana-cased \
+--train_path=data/monolingual/french_data/train.txt \
+--val_path=data/monolingual/french_data/valid.txt \
+--test_path=data/monolingual/french_data/test.txt \
+--model_saving_path=outputs_french 
+
+python3 train_intimacy_model.py --mode=internal-test \
+--model_name=bert-base-french \
+--pre_trained_model_name_or_path=outputs_french \
+--train_path=data/monolingual/french_data/train.txt \
+--val_path=data/monolingual/french_data/valid.txt \
+--test_path=data/monolingual/french_data/test.txt \
+--predict_data_path=data/monolingual/french_data/test.txt
+---------------------------------------------------------------------------
+Chinese:
+
+python3 train_intimacy_model.py --mode=train \
+--model_name=bert-base-chinese \
+--pre_trained_model_name_or_path=bert-base-chinese \
+--train_path=data/monolingual/chinese_data/train.txt \
+--val_path=data/monolingual/chinese_data/validate.txt \
+--test_path=data/monolingual/chinese_data/test.txt \
+--model_saving_path=outputs_chinese
+
+python3 train_intimacy_model.py --mode=internal-test \
+--model_name=bert-base-chinese \
+--pre_trained_model_name_or_path=outputs_chinese \
+--train_path=data/monolingual/chinese_data/train.txt \
+--val_path=data/monolingual/chinese_data/validate.txt \
+--test_path=data/monolingual/chinese_data/test.txt \
+--predict_data_path=data/monolingual/chinese_data/test.txt
