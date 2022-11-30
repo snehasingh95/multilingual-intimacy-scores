@@ -36,22 +36,41 @@ Training (on English only):
 #xlm-roberta-base
 python3 train_intimacy_model.py --mode=train --model_name=xlm-roberta-base --pre_trained_model_name_or_path=xlm-roberta-base --base_dir=data/multi_language_data/ --file_name=train_normalized.csv  --model_saving_path=outputs --lang English
 
+#cardiffnlp/twitter-xlm-roberta-base-sentiment
+python3 train_intimacy_model.py --mode=train --model_name=cardiffnlp/twitter-xlm-roberta-base-sentiment --pre_trained_model_name_or_path=cardiffnlp/twitter-xlm-roberta-base-sentiment --base_dir=data/multi_language_data/ --file_name=train_normalized.csv  --model_saving_path=outputs --lang English
+
 Training (on Multi-languages only): 
 
 #xlm-roberta-base
 python3 train_intimacy_model.py --mode=train --model_name=xlm-roberta-base --pre_trained_model_name_or_path=xlm-roberta-base --base_dir=data/multi_language_data/ --file_name=train_normalized.csv  --model_saving_path=outputs --lang English French Chinese
 
+#cardiffnlp/twitter-xlm-roberta-base-sentiment
+python3 train_intimacy_model.py --mode=train --model_name=cardiffnlp/twitter-xlm-roberta-base-sentiment --pre_trained_model_name_or_path=cardiffnlp/twitter-xlm-roberta-base-sentiment --base_dir=data/multi_language_data/ --file_name=train_normalized.csv  --model_saving_path=outputs --lang English French Chinese
+
+
 Intimacy Score Evaluation (Internal Test Evaluation - English Only):
 
 #xlm-roberta-base
-python train_intimacy_model.py --mode=internal-test --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --lang English --test_saving_path=internal_test_en.txt
+python train_intimacy_model.py --mode=internal-test --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --lang English --test_saving_path=internal_test_en.txt 
+
+#cardiffnlp/twitter-xlm-roberta-base-sentiment
+python train_intimacy_model.py --mode=internal-test --model_name=cardiffnlp/twitter-xlm-roberta-base-sentiment --pre_trained_model_name_or_path=outputs --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --lang English --test_saving_path=internal_test_en.txt
+
 
 Intimacy Score Evaluation (Internal Test Evaluation - Entire Data Set):
 
 #xlm-roberta-base
 python train_intimacy_model.py --mode=internal-test --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --test_saving_path=internal_test.txt 
 
+#cardiffnlp/twitter-xlm-roberta-base-sentiment
+python train_intimacy_model.py --mode=internal-test --model_name=cardiffnlp/twitter-xlm-roberta-base-sentiment --pre_trained_model_name_or_path=outputs --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --test_saving_path=internal_test.txt
+
+
 Testing/Inference:
 
 #xlm-roberta-base
-python train_intimacy_model.py --mode=inference --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --test_saving_path=inference.txt
+python train_intimacy_model.py --mode=inference --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --test_saving_path=inference.txt 
+
+#cardiffnlp/twitter-xlm-roberta-base-sentiment
+python train_intimacy_model.py --mode=inference --model_name=cardiffnlp/twitter-xlm-roberta-base-sentiment --pre_trained_model_name_or_path=outputs --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --test_saving_path=inference.txt 
+

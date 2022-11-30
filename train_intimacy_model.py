@@ -1,5 +1,4 @@
 # train.py
-
 from config import Config
 import math
 from scipy import stats
@@ -9,16 +8,13 @@ import torch.optim as optim
 from torch import nn, Tensor
 from torch.autograd import Variable
 import torch
-from transformers import XLMRobertaTokenizer, XLMRobertaForSequenceClassification
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from argparse import ArgumentParser
 from datasets import load_dataset
 from random import shuffle
 
 
 torch.manual_seed(0)
-
-
-
 
 def padding(text, pad, max_len = 50):
 
@@ -312,11 +308,11 @@ if __name__=='__main__':
 
     
     config = Config(args.model_name)
-    tokenizer = XLMRobertaTokenizer.from_pretrained(args.pre_trained_model_name_or_path,num_labels=1,output_attentions = False,output_hidden_states = False)
+    tokenizer = AutoTokenizer.from_pretrained(args.pre_trained_model_name_or_path,num_labels=1,output_attentions = False,output_hidden_states = False)
     # Create Model with specified optimizer and loss function
     ##############################################################
 
-    model = XLMRobertaForSequenceClassification.from_pretrained(args.pre_trained_model_name_or_path,num_labels=1,output_attentions = False,output_hidden_states = False)
+    model = AutoModelForSequenceClassification.from_pretrained(args.pre_trained_model_name_or_path,num_labels=1,output_attentions = False,output_hidden_states = False,ignore_mismatched_sizes=True)
     if config.cuda:
         model.cuda()
 
