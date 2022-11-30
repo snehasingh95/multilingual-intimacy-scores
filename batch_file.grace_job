@@ -40,7 +40,7 @@ mkdir outputs/$TEST_ID
 ######################################################################################################################################################
 
 #training (test1)
-python3 train_intimacy_model.py --mode=train --model_name=xlm-roberta-base --pre_trained_model_name_or_path=xlm-roberta-base --base_dir=data/multi_language_data/ --file_name=train_normalized.csv  --model_saving_path=outputs/$TEST_ID/tmp/ --lang English > outputs/$TEST_ID/train_en_console.txt
+python3 train_intimacy_model.py --mode=train --model_name=xlm-roberta-base --pre_trained_model_name_or_path=xlm-roberta-base --base_dir=data/multi_language_data/ --file_name=train_normalized.csv  --model_saving_path=outputs/$TEST_ID/ --lang English > outputs/$TEST_ID/train_en_console.txt
 #cat outputs/$TEST_ID/train_en_console.txt
 
 #training on French after English (European Language) (test2)
