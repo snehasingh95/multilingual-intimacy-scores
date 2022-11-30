@@ -14,18 +14,6 @@
 ##SBATCH --mail-type=           #Send email on all job events
 ##SBATCH --mail-user=snehasingh95@tamu.edu    #Send all emails to email_address 
 
-# module load GCC/7.3.0-2.30
-# module load icc/2018.3.222-GCC-7.3.0-2.30
-# module load ifort/2018.3.222-GCC-7.3.0-2.30
-# module load ASE/3.17.0-Python-3.6.6
-
-# module load GCC/7.3.0-2.30  OpenMPI/3.1.1
-# module load icc/2018.3.222-GCC-7.3.0-2.30  OpenMPI/3.1.1
-# module load icc/2018.3.222-GCC-7.3.0-2.30  impi/2018.3.222
-# module load ifort/2018.3.222-GCC-7.3.0-2.30  OpenMPI/3.1.1
-# module load ifort/2018.3.222-GCC-7.3.0-2.30  impi/2018.3.222
-# module load ASE/3.17.0-Python-3.6.6
-
 module load iccifort/2020.1.217
 module load impi/2019.7.217
 module load ASE/3.20.1-Python-3.8.2
@@ -42,7 +30,6 @@ source intimacy-scores/bin/activate   #active the venv you created in step 1
 # pip install -e .
 # python3 -m pip install sentencepiece datasets
 # cd /scratch/user/avdhi.shah/ 
-
 
 cd nlp/project/xlm_r
 TEST_ID='test1'
@@ -97,8 +84,6 @@ python3 train_intimacy_model.py --mode=train --model_name=xlm-roberta-base --pre
 #internal testing - italian
 #python3 train_intimacy_model.py --mode=internal-test --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs/$TEST_ID/ --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --lang Italian --test_saving_path=outputs/$TEST_ID/internal_test_it.txt  > outputs/$TEST_ID/internal_test_it_console.txt
 #cat outputs/$TEST_ID/internal_test_it_console.txt
-
-
 
 ######################################################################################################################################################
 

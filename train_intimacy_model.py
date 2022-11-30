@@ -1,6 +1,5 @@
 # train.py
 
-import os
 from config import Config
 import math
 from scipy import stats
@@ -10,7 +9,7 @@ import torch.optim as optim
 from torch import nn, Tensor
 from torch.autograd import Variable
 import torch
-from transformers import BertTokenizer, BertModel, RobertaTokenizer, RobertaModel,  RobertaForSequenceClassification, XLMRobertaTokenizer, XLMRobertaForSequenceClassification
+from transformers import XLMRobertaTokenizer, XLMRobertaForSequenceClassification
 from argparse import ArgumentParser
 from datasets import load_dataset
 from random import shuffle
