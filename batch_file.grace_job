@@ -14,29 +14,34 @@
 ##SBATCH --mail-type=           #Send email on all job events
 ##SBATCH --mail-user=snehasingh95@tamu.edu    #Send all emails to email_address 
 
-module load GCC/7.3.0-2.30
-module load icc/2018.3.222-GCC-7.3.0-2.30
-module load ifort/2018.3.222-GCC-7.3.0-2.30
-module load ASE/3.17.0-Python-3.6.6
+# module load GCC/7.3.0-2.30
+# module load icc/2018.3.222-GCC-7.3.0-2.30
+# module load ifort/2018.3.222-GCC-7.3.0-2.30
+# module load ASE/3.17.0-Python-3.6.6
 
-module load GCC/7.3.0-2.30  OpenMPI/3.1.1
-module load icc/2018.3.222-GCC-7.3.0-2.30  OpenMPI/3.1.1
-module load icc/2018.3.222-GCC-7.3.0-2.30  impi/2018.3.222
-module load ifort/2018.3.222-GCC-7.3.0-2.30  OpenMPI/3.1.1
-module load ifort/2018.3.222-GCC-7.3.0-2.30  impi/2018.3.222
-module load ASE/3.17.0-Python-3.6.6
+# module load GCC/7.3.0-2.30  OpenMPI/3.1.1
+# module load icc/2018.3.222-GCC-7.3.0-2.30  OpenMPI/3.1.1
+# module load icc/2018.3.222-GCC-7.3.0-2.30  impi/2018.3.222
+# module load ifort/2018.3.222-GCC-7.3.0-2.30  OpenMPI/3.1.1
+# module load ifort/2018.3.222-GCC-7.3.0-2.30  impi/2018.3.222
+# module load ASE/3.17.0-Python-3.6.6
 
 module load iccifort/2020.1.217
 module load impi/2019.7.217
 module load ASE/3.20.1-Python-3.8.2
-cd /scratch/user/sunayna/   #xxxx is your account name
+cd /scratch/user/avdhi.shah/   #xxxx is your account name
 #creating the environment
 # python3 -m venv intimacy-scores
 source intimacy-scores/bin/activate   #active the venv you created in step 1
 
 # python3 -m pip install --upgrade pip
-# python3 -m pip install numpy==1.16.1 torch==1.7.1+cu110 torchvision==0.8.2+cu110 torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
-# python3 -m pip install scipy tqdm transformers sentencepiece datasets
+# python3 -m pip install numpy torch==1.7.1+cu110 torchvision==0.8.2+cu110 torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+# python3 -m pip install scipy tqdm
+# git clone https://github.com/huggingface/transformers.git
+# cd transformers
+# pip install -e .
+# python3 -m pip install sentencepiece datasets
+# cd /scratch/user/avdhi.shah/ 
 
 
 cd nlp/project/xlm_r
@@ -47,28 +52,30 @@ mkdir outputs/$TEST_ID
 
 ######################################################################################################################################################
 
-#training
-python3 train_intimacy_model.py --mode=train --model_name=xlm-roberta-base --pre_trained_model_name_or_path=xlm-roberta-base --base_dir=data/multi_language_data/ --file_name=train_normalized.csv  --model_saving_path=outputs/$TEST_ID/ --lang English > outputs/$TEST_ID/train_en_console.txt
+#training (test1)
+python3 train_intimacy_model.py --mode=train --model_name=xlm-roberta-base --pre_trained_model_name_or_path=xlm-roberta-base --base_dir=data/multi_language_data/ --file_name=train_normalized.csv  --model_saving_path=outputs/$TEST_ID/tmp/ --lang English > outputs/$TEST_ID/train_en_console.txt
 #cat outputs/$TEST_ID/train_en_console.txt
 
-#training on French after English (European Language)
+#training on French after English (European Language) (test2)
 #python3 train_intimacy_model.py --mode=train --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs/$TEST_ID/ --base_dir=data/multi_language_data/ --file_name=train_normalized.csv  --model_saving_path=outputs/$TEST_ID/ --lang French > outputs/$TEST_ID/train_fr_console.txt
 #cat outputs/$TEST_ID/train_fr_console.txt
 
-#training on Chinese after English (Asian Language)
+#training on Chinese after English (Asian Language) (test3)
 #python3 train_intimacy_model.py --mode=train --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs/$TEST_ID/ --base_dir=data/multi_language_data/ --file_name=train_normalized.csv  --model_saving_path=outputs/$TEST_ID/ --lang Chinese > outputs/$TEST_ID/train_ch_console.txt
 #cat outputs/$TEST_ID/train_ch_console.txt
 
-#training on English and French
-#python3 train_intimacy_model.py --mode=train --model_name=xlm-roberta-base --pre_trained_model_name_or_path=xlm-roberta-base --base_dir=data/multi_language_data/ --file_name=train_normalized.csv  --model_saving_path=outputs/$TEST_ID/ --lang English French > outputs/$TEST_ID/train_en_console.txt
+#training on English and French (test4)
+#python3 train_intimacy_model.py --mode=train --model_name=xlm-roberta-base --pre_trained_model_name_or_path=xlm-roberta-base --base_dir=data/multi_language_data/ --file_name=train_normalized.csv  --model_saving_path=outputs/$TEST_ID/ --lang English French > outputs/$TEST_ID/train_en_fr_console.txt
+#cat outputs/$TEST_ID/train_en_fr_console.txt
 
-#training on English, French and Chinese
-#python3 train_intimacy_model.py --mode=train --model_name=xlm-roberta-base --pre_trained_model_name_or_path=xlm-roberta-base --base_dir=data/multi_language_data/ --file_name=train_normalized.csv  --model_saving_path=outputs/$TEST_ID/ --lang English French Chinese > outputs/$TEST_ID/train_en_console.txt
+#training on English, French and Chinese (test5)
+#python3 train_intimacy_model.py --mode=train --model_name=xlm-roberta-base --pre_trained_model_name_or_path=xlm-roberta-base --base_dir=data/multi_language_data/ --file_name=train_normalized.csv  --model_saving_path=outputs/$TEST_ID/ --lang English French Chinese > outputs/$TEST_ID/train_en_fr_ch_console.txt
+# cat outputs/$TEST_ID/train_en_fr_ch_console.txt
 
 ######################################################################################################################################################
 
 #internal testing - english
-#python3 -m train_intimacy_model.py --mode=internal-test --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs/$TEST_ID/ --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --lang English --test_saving_path=outputs/$TEST_ID/internal_test_en.txt  > outputs/$TEST_ID/internal_test_en_console.txt
+#python3 train_intimacy_model.py --mode=internal-test --model_name=xlm-roberta-base --pre_trained_model_name_or_path=outputs/$TEST_ID/ --base_dir=data/multi_language_data/ --file_name=train_normalized.csv --lang English --test_saving_path=outputs/$TEST_ID/internal_test_en.txt  > outputs/$TEST_ID/internal_test_en_console.txt
 #cat outputs/$TEST_ID/internal_test_en_console.txt
 
 #internal testing - french

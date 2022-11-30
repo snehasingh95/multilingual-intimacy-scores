@@ -347,8 +347,6 @@ if __name__=='__main__':
         
         #k_fold_cross_validation (train = 90%, val = 10%)
         train_text_folds,train_label_folds,val_text_folds,val_label_folds = k_fold_split(config.n_folds-1, text_folds,label_folds)
-
-        exit()
         
         model.train()
         optimizer = optim.Adam(model.parameters(), lr=config.lr, weight_decay=1e-6)
@@ -401,7 +399,10 @@ if __name__=='__main__':
         
     elif args.mode == 'internal-test':
         raw_data = load_data(args.base_dir, args.file_name)[args.sheet]
-        test_text, test_labels = get_data(raw_data, args.feature_cols, args.target_col, lang=args.lang[0])
+        if args.lang:
+            test_text, test_labels = get_data(raw_data, args.feature_cols, args.target_col, lang=args.lang[0])
+        else:
+            test_text, test_labels = get_data(raw_data, args.feature_cols, args.target_col)
         
         print('test:')
         test_result, test_score = get_test_result(model, test_text, test_labels, config, tokenizer,save_path=args.test_saving_path, ext_test = False)
