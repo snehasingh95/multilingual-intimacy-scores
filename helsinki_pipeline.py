@@ -144,7 +144,7 @@ from load_data import load_data, getLanguageData, k_folds, k_fold_split, shuffle
 
 k=10
 
-raw_data = load_data("data", "train_copy.csv")['train']
+raw_data = load_data("data/multi_language_data/", "train_normalized.csv")['train']
 
 #English
 print('English')

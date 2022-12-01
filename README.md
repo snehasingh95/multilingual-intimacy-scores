@@ -37,7 +37,7 @@ NLP task of quantifying the intimacy-score of texts in a multi-lingual setup
 
 ###  hugging face -  helsinki translation + pedropei
 
-    python....
+    python3 helsinki_pipeline.py
  
 ## Results/Models:
 Results and Models that were run are available at [multilingual-intimacy-scores/model.ipynb at huggingface · snehasingh95/multilingual-intimacy-scores (github.com)](https://github.com/snehasingh95/multilingual-intimacy-scores/blob/huggingface/model.ipynb)
